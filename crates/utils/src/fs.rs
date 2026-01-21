@@ -481,6 +481,16 @@ pub fn read_dir<T: AsRef<Path> + Debug>(path: T) -> Result<Vec<fs::DirEntry>, Fs
     Ok(results)
 }
 
+/// Get the file metadata of a given dir entry, wrapping its error type
+#[inline]
+#[instrument]
+pub fn dir_entry_file_type(dir_entry: &fs::DirEntry) -> Result<fs::FileType, FsError> {
+    dir_entry.file_type().map_err(|error| FsError::Read {
+        path: dir_entry.path(),
+        error: Box::new(error),
+    })
+}
+
 /// Read all contents recursively for the provided directory path.
 #[inline]
 #[instrument]
